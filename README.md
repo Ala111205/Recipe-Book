@@ -1,5 +1,6 @@
 A simple Recipe Book web app built with HTML, CSS, and JavaScript.
-✨ Features
+
+✨ Features:-
 . Add recipes with name, ingredients, steps, and image
 . Store recipes in localStorage (persists after refresh)
 . Search recipes by name or ingredients (with debounce)
