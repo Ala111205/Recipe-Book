@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Mozilla+Headline:wght@200..700&family=Playwrite+HU:wght@100..400&display=swap');
+
+*{
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+:root{
+    --pcolor: chocolate;
+    --scolor: black;
+    --tcolor: white;
+}
+
+.web{
+  font-family: "Playwrite HU", cursive;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+header{
+    background-color: var(--pcolor);
+    padding: 1rem;
+    text-align: center;
+}
+
+.container{
+    width:100%;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+#recipeForm{
+    width:49.5%;
+    min-height: 300px;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--tcolor);
+    box-shadow: 0px 0px 10px 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:20px;
+}
+
+#recipeForm input, textarea, button{
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--scolor);
+}
+
+#recipeForm button{
+    background-color: var(--pcolor);
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+#recipeForm button:hover{
+    background-color: rgb(170, 93, 38);
+}
+
+.searchRecipes{
+    width: 49.5%;
+    height: 430px;
+    padding: 0.2rem;
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap:2px;
+    overflow: hidden;
+}
+
+#search{
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: none;
+    background-color: var(--tcolor);
+    box-shadow: 0 0 3px 1px;
+}
+
+#recipes{
+    width: 100%;
+    height: 360px;
+    padding: 0.1rem 0.5rem;
+    border-radius: 8px;
+    overflow: auto;
+}
+
+#recipes button{
+    background-color: var(--pcolor);
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+
+#recipes button:hover{
+    background-color: rgb(170, 93, 38);
+}
+
+
+.card{
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    margin:0.5rem 0;
+    border-radius: 12px;
+    background-color: var(--tcolor);
+    box-shadow: 0 0 4px 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:7px;
+}
+
+.card .iconDiv{
+    padding: 0 7px;
+    padding-bottom: 2px;
+    padding-left: 7.5px;
+    border-radius: 50%;
+    background-color: var(--tcolor);
+    box-shadow: 0px 0px 2px;
+    align-self: flex-end;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.card .iconDiv:active{
+    transform: scale(0.9);
+}
+
+.card img{
+    width: 100%;
+    height: 215px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+#modal{
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+.content{
+    max-width: 600px;
+    width: 90%;
+    height: 80%;
+    background-color: var(--tcolor);
+    box-shadow: 0px 0px 10px 1px;
+    border-radius: 12px;
+    padding: 1rem;
+    overflow: auto;
+}
+
+#closeModal{
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#modalImg{
+    width: 100%;
+    height: 250px;
+    border-radius: 8px;
+}
+
+#modal ul, #modal ol{
+    margin: 1rem;
+}
+
+@media only screen and (max-width: 900px){
+    .container{
+        flex-wrap: wrap;
+    }
+    #recipeForm, .searchRecipes{
+        width:100%;
+        max-width: 700px;
+    }
+}
+

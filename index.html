@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recipe Book</title>
+  <script src="https://kit.fontawesome.com/9885839914.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+  <div class="web">
+    <header>
+      <h1>🍲 Recipe Book</h1>
+    </header>
+    <div class="container">
+      <form id="recipeForm">
+        <input type="text" id="name" placeholder="Receipe Name" required>
+        <textarea id="ingredients" placeholder="Ingredients" required></textarea>
+        <textarea id="steps" placeholder="Steps" required></textarea>
+        <input type="file" id="image" accept="image/*" required>
+        <button id="submit">Add Receipe</button>
+      </form>
+
+      <div class="searchRecipes">
+        <input type="text" id="search" placeholder="Search recipes by name or ingredients...">
+
+        <div id="recipes"></div>
+      </div>
+    </div>
+
+    <div id="modal">
+      <div class="content">
+        <span id="closeModal">&times;</span>
+        <h2 id="modalName"></h2>
+        <img id="modalImg" alt="Recipe image">
+        <h3>Ingredients</h3>
+        <ul id="modalIngredients"></ul>
+        <h3>Steps</h3>
+        <ol id="modalSteps"></ol>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/gh/cfinke/Typo.js/typo/typo.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
