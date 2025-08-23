@@ -1,29 +1,27 @@
-let recipes = loadRecipes();
+let recipes = [];
 let dictionary
 let isAdminSession = false;
 
 const firebaseConfig = {
   apiKey: "AIzaSyAhoJe-sERK2rvhrZx1T5uJvw7dyq38U0A",
-  authDomain: "recipe-book-eca9e.firebase.com",
+  authDomain: "recipe-book-eca9e.firebaseapp.com",
   projectId: "recipe-book-eca9e",
-  storageBucket: "recipe-book-eca9e.appspot.com",
-  messageSenderId: "919076495627",
-  appId: "1:919076495627:web:323e76aabce76f350dc20e"
-}
+  storageBucket: "recipe-book-eca9e.appspot.com", 
+  messagingSenderId: "919076495627",
+  appId: "1:919076495627:web:323e76aabce76f350dc20e",
+  measurementId: "G-8Y6CC5PPV9"
+};
 
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import {getAuth, signInWithEmailAndPassword, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+setLogLevel("silent"); 
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-function loadRecipes(){
-  return JSON.parse(localStorage.getItem("recipes") || "[]")
-};
-
-function saveRecipes(){
-  localStorage.setItem("recipes", JSON.stringify(recipes))
-};
+const db = getFirestore(app);
 
 async function loadDictionary(){
   const aff = await fetch("dictionaries/en_US.aff").then(w=>w.text());
@@ -37,13 +35,65 @@ function correctSentence(sentence){
   return sentence.split(" ").map(word=>{
     if (!dictionary.check(word)){
       const suggestions = dictionary.suggest(word);
-      return suggestions.lenght > 0 ? suggestions[0] : word;
+      return suggestions.length > 0 ? suggestions[0] : word;
     }
     return word;
   }).join(" ")
 };
 
-document.getElementById("recipeForm").addEventListener("submit", function(e){
+async function loadRecipesfromDB(){
+  try {
+    recipes = [];
+    const snap = await getDocs(collection(db, "recipes"));
+    snap.forEach(docs => {
+      recipes.push({ id: docs.id, ...docs.data() });
+    });
+    renderRecipes(recipes);
+  } catch (err) {
+    console.error("Failed to load recipes:", err);
+    alert("Failed to connect to Firestore. Check console for details.");
+  }
+}
+ 
+async function saveRecipesfromDB(recipe){
+  try {
+    await addDoc(collection(db, "recipes"), recipe);
+    await loadRecipesfromDB();
+  } catch (err) {
+    console.error("Failed to save recipe:", err);
+    alert("Could not save recipe to Firestore. Check console for details.");
+  }
+}
+
+async function deleteRecipefromDB(id){
+  await deleteDoc(doc(db, "recipes", id));
+  await loadRecipesfromDB();
+}
+
+async function uploadImageToCloudinary(file){
+  const URL="https://api.cloudinary.com/v1_1/dndmaxbl2/upload";
+  const UPLOAD_PRESET = "recipe_upload";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+  formData.append("folder", "recipes");
+
+  const res = await fetch(URL, {
+    method: "POST",
+    body: formData
+  });
+
+  if(!res.ok){
+    throw new Error("Image upload failed")
+  }
+
+  const data = await res.json();
+  console.log("Uploaded Image URL:", data.secure_url);
+  return data.secure_url;
+}
+
+document.getElementById("recipeForm").addEventListener("submit", async function(e){
   e.preventDefault();
 
   let name = document.getElementById("name").value.trim();
@@ -70,29 +120,29 @@ document.getElementById("recipeForm").addEventListener("submit", function(e){
     return;
   }
 
-  if (file.size > 2 * 1024 * 1024){
-    alert("Image as too large (max 2MB)")
-  }
+  document.getElementById("recipeForm").reset();
 
   name = correctSentence(name);
   ingredients = ingredients.map(i=>correctSentence(i));
   steps = steps.map(s=>correctSentence(s));
 
-  const reader = new FileReader();
-  reader.onload = function(){
-    const newRecipes = {
-      id: crypto.randomUUID? crypto.randomUUID() : Date.now().toString(),
+  try {
+    const imageURL = await uploadImageToCloudinary(file);
+
+    const newRecipe = {
       name,
       ingredients,
       steps,
-      image: reader.result
+      image: imageURL
     };
-    recipes.push(newRecipes);
-    saveRecipes();
-    renderRecipes(recipes);
-    document.getElementById("recipeForm").reset();
+    
+    console.log("Recipe being saved:", newRecipe);  
+
+    await saveRecipesfromDB(newRecipe);
+    alert("Recipe added successfully!")
+  } catch (error) {
+      console.error("Image upload failed:", error);
   }
-  reader.readAsDataURL(file);
 });
 
 function renderRecipes(list){
@@ -203,10 +253,8 @@ async function deleteRecipe(id){
   if(!(await requireAdmin())) return;
   if(!confirm("Are you sure you want to delete this Recipe?")) return;
 
-  recipes = recipes.filter(r=>r.id !== id);
+  await deleteRecipefromDB(id)
 
-  saveRecipes();
-  renderRecipes(recipes);
   alert("Recipe deleted successfully")
 };
 
@@ -230,4 +278,4 @@ searchInput.addEventListener("input",debounce(()=>{
   renderRecipes(filtered)
 }, 250));
 
-renderRecipes(recipes);
+loadRecipesfromDB();
