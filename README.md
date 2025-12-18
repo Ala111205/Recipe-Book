@@ -5,6 +5,8 @@
       It allows users to add, view, search, and manage recipes through a clean and user-friendly interface.
 
       Each recipe includes a name, ingredients, preparation steps, and an image of the finished dish. The application emphasizes strong frontend fundamentals, asynchronous JavaScript handling, and integration with third-party cloud services.
+
+**Live Demo:** https://ala111205.github.io/Recipe-Book/
       
 **🎯 Objective**
 
